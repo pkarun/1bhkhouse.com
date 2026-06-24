@@ -12,6 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Sync files to the server
       - name: Deploy via rsync
         uses: easingthemes/ssh-deploy@main
         env:
@@ -19,4 +20,16 @@ jobs:
           REMOTE_HOST: ${{ secrets.SERVER_IP }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
           TARGET: /var/www/html/1bhkhouse.com/
-          EXCLUDE: "/.git/, /scripts/, /webhook.php"
+          EXCLUDE: "/.git/, /.github/, /scripts/, /webhook.php"
+
+      # Fix permissions to ensure Apache (www-data) can read the files
+      - name: Fix file permissions
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo chown -R www-data:www-data /var/www/html/1bhkhouse.com/
+            sudo find /var/www/html/1bhkhouse.com/ -type d -exec chmod 755 {} \;
+            sudo find /var/www/html/1bhkhouse.com/ -type f -exec chmod 644 {} \;
