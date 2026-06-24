@@ -1,0 +1,28 @@
+# --- Local Development Files ---
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# --- Secret/Sensitive Files ---
+.env
+config.php
+credentials.php
+*.pem
+*.key
+
+# --- Local Tooling & Scripts ---
+/scripts/
+/webhook.php
+fix_links.php
+list_duplicate_files.php
+force_replace.php
+
+# --- System/OS Files ---
+thumbs.db
+.cache/
+
+# --- Backup/Temporary Files ---
+*.bak
+*.tmp
+temp/
