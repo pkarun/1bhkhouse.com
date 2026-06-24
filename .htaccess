@@ -1,0 +1,63 @@
+RewriteEngine On
+
+# Force HTTPS (Moved to the top for efficiency)
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 1. Handle the dedicated /blog/ directory bypass mapping
+RewriteRule ^blog/$ blog.html [L]
+
+# 2. Add trailing slash to extensionless URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,5}$
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.*)$ /$1/ [R=301,L]
+
+# 3. Remove .html extension from URLs
+RewriteCond %{THE_REQUEST} \s/([^?\s]*?)\.html[\s?] [NC]
+RewriteRule ^ /%1/ [R=301,L]
+
+# 4. Internally map extensionless URLs to .html files
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+)/$ $1.html [L]
+
+
+# Block FreeFileSync database files from public access
+<Files "sync.ffs_db">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Alternative: Block all .ffs_db files (including variants)
+<FilesMatch "\.ffs_db$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Also block lock files
+<Files "sync.ffs_lock">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Disable directory browsing
+Options -Indexes
+
+# Hide sensitive files
+<Files ~ "^\.">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect PHP config files
+<FilesMatch "\.(env|ini|log|bak|dist)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Razorpay scripts protection (optional)
+<FilesMatch "^scripts/">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
