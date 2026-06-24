@@ -13,10 +13,15 @@ foreach ($files as $file) {
     $content = file_get_contents($file);
 
     // This is the exact string you want to find
-    $search = '<a href="" class="subscribe-link">View 1 BHK House Details Here</a>';
+    $search = '<a
+      href="/" target="_blank" rel="noreferrer noopener"></a><a
+      href="/" target="_blank" rel="nofollow noopener
+      noreferrer">/</a>';
     
     // This is the exact string you want to replace it with
-    $replace = '<a href="/" class="subscribe-link">View 1 BHK House Details Here</a>';
+    $replace = '<a
+      href="/" target="_blank" rel="nofollow noopener
+      noreferrer">https://1bhkhouse.com</a>';
 
     if (strpos($content, $search) !== false) {
         $content = str_replace($search, $replace, $content);
